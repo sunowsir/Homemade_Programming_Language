@@ -16,7 +16,7 @@ case ${1} in
             sudo cp ./MYCC /usr/bin/
         fi
     ;;
-    *)
+    "-gt" | "-tg")
         java -jar ${build_dir}/1.Need_file/1.Antlr_3.4/antlr-3.4-complete.jar ${src_dir}/ExprCppTree.g 
         g++ -g ${src_dir}/*.c ${src_dir}/*.cpp  ${build_dir}/1.Need_file/*.o  -o ${program_dir}/MYCC 
         if [[ ${?} -eq 0  ]];
