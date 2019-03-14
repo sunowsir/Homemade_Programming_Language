@@ -12,3 +12,23 @@ Use 'antlr' to generate a syntax tree, a self-made programming language
           make
           sudo make install
         ```
+
+* Generation interpreter
+
+    Run the 'Generate_Translater' script in the './3.CC_Program/' directory.
+
+    ```bash
+    cd ./3.CC_Program/
+    
+    # Run 'antlr' to generate the syntax tree code via the grammar file ('2.CC_src/ExprCppTree.g')
+    ./Generate_Translater -g
+    
+    # Generate an interpreter by compiling
+    ./Generate_Translater -t
+    
+    # Parameters can be superimposed 
+    # eg.
+    ./Generate_Translater -gt
+    ```
+
+    
