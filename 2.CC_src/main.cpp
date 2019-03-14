@@ -90,6 +90,7 @@ int ExprTreeEvaluator::run(pANTLR3_BASE_TREE tree) {
         int r = 0;
         for(int i = 0; i < k; i++) {
             r = run(getChild(tree, i));
+            printf("value = %d\n", r);
         }
         return r;
     }
