@@ -21,7 +21,7 @@ case ${1} in
         g++ -g ${src_dir}/*.c ${src_dir}/*.cpp  ${build_dir}/1.Need_file/*.o  -o ${program_dir}/MYCC 
         if [[ ${?} -eq 0  ]];
         then
-            sudo cp ./MYCC /usr/bin/
+            sudo cp ${program_dir}/MYCC /usr/bin/
         fi
     ;;
 esac
