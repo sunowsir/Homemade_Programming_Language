@@ -72,6 +72,36 @@ int ExprTreeEvaluator::run (pANTLR3_BASE_TREE tree) {
                 memory[var] = val;
                 return val;
             }
+            case TOK_IF: {
+                int val = run(getChild(tree, 0));
+                if (val) {
+                    return run(getChild(tree, 1)); 
+                } else if (getChild(tree, 2) != NULL) {
+                    int ret_2 = run(getChild(tree, 2)); 
+                    if (ret_2 == 0 && getChild(tree, 3) != NULL) {
+                        return run(getChild(tree, 3)); 
+                    }
+                    return ret_2;
+                } else if (getChild(tree, 3) != NULL){
+                    return run(getChild(tree, 3)); 
+                }
+                return 0;
+            }
+            case TOK_ELIF: {
+                int val = run(getChild(tree, 0));
+                if (val) {
+                    return run(getChild(tree, 1)); 
+                } 
+                return 0;
+            }
+            case TOK_ELSE: {
+                if (getChild(tree, 0) != NULL) {
+                    return run(getChild(tree, 0));
+                } else if (getChild(tree, 1) != NULL) {
+                    return run(getChild(tree, 1));
+                }
+                return 0;
+            }
             case OPR_OR: 
                 return run(getChild(tree, 0)) || run(getChild(tree, 1));
             case OPR_AND: 

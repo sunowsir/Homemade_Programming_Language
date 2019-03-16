@@ -12,6 +12,7 @@ options {
  */
 tokens {
     TOK_BLOCK;
+    TOK_COND;
     TOK_IF;
     TOK_ELIF;
     TOK_ELSE;
@@ -62,17 +63,36 @@ assignExpr:
 commaExpr:
     assignExpr (OPR_COMMA^ assignExpr)*;
 
+condBaseExpr:
+    PARENTHESES_LEFT! commaExpr^ PARENTHESES_RIGHT!;
+
+ifExpr:
+    /* 不能既用!又用->  */
+    KW_IF condBaseExpr block ENDLINE -> 
+    ^(TOK_IF condBaseExpr block);
+
+elifExpr:
+    KW_ELIF condBaseExpr block ENDLINE ->
+    ^(TOK_ELIF condBaseExpr block);
+
+elseExpr:
+    KW_ELSE block ENDLINE -> 
+    ^(TOK_ELSE block);
+
+condExpr:
+    ifExpr^ ENDLINE! elifExpr* ENDLINE! elseExpr?; 
+
 stmt: 
     commaExpr ENDLINE -> commaExpr | 
-    block | 
-    ENTER -> |
+    condExpr ENDLINE -> condExpr | 
+    // block | 
     ENDLINE -> ;
 
 block_base: 
     (stmt)*;
 
 block: 
-    CURLY_BRACE_LEFT block_base CURLY_BRACE_RIGHT ENDLINE -> ^(TOK_BLOCK block_base);
+    CURLY_BRACE_LEFT block_base CURLY_BRACE_RIGHT -> ^(TOK_BLOCK block_base);
 
 mainBlock: 
     KW_MAIN! block;
@@ -128,7 +148,6 @@ CURLY_BRACE_RIGHT: '}';
 ID: ('a'..'z'|'A'..'Z')+ ;
 INT: '~'? '0'..'9'+ ;
 
-ENDLINE: '\r'? ';'+ '\n';
-ENTER: '\n';
+ENDLINE: '\r'? '\n';
 
 WS : (' '|'\t')+ {$channel = HIDDEN;};
