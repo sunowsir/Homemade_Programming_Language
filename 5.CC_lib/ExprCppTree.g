@@ -12,10 +12,6 @@ options {
  */
 tokens {
     TOK_BLOCK;
-    TOK_COND;
-    TOK_IF;
-    TOK_ELIF;
-    TOK_ELSE;
 }
 
 @header {
@@ -60,32 +56,54 @@ orExpr:
 assignExpr: 
     (ID OPR_ASSIGN^)* orExpr;
 
+/* 运算表达式：逗号表达式 */
 commaExpr:
     assignExpr (OPR_COMMA^ assignExpr)*;
 
-condBaseExpr:
+/* if-elif-else 语句 <start>*/
+
+ifcondBaseExpr:
     PARENTHESES_LEFT! commaExpr^ PARENTHESES_RIGHT!;
 
-ifExpr:
-    /* 不能既用!又用->  */
-    KW_IF condBaseExpr block ENDLINE -> 
-    ^(TOK_IF condBaseExpr block);
 
 elifExpr:
-    KW_ELIF condBaseExpr block ENDLINE ->
-    ^(TOK_ELIF condBaseExpr block);
+    KW_ELIF^ ifcondBaseExpr block; 
 
 elseExpr:
-    KW_ELSE block ENDLINE -> 
-    ^(TOK_ELSE block);
+    KW_ELSE^ block; 
 
-condExpr:
-    ifExpr^ ENDLINE! elifExpr* ENDLINE! elseExpr?; 
+ifExpr:
+    KW_IF^ ifcondBaseExpr block elifExpr* elseExpr?; 
+
+/* if-elif-else 语句 <end>*/
+
+/* for 语句 <start> */
+
+forExpr: 
+    KW_FOR^ 
+    PARENTHESES_LEFT! 
+        commaExpr ';'! commaExpr ';'! commaExpr 
+    PARENTHESES_RIGHT!
+    block;
+
+/* for 语句 <end> */
+
+/* while 语句 <start> */
+
+whileExpr: 
+    KW_WHILE^ 
+    PARENTHESES_LEFT! 
+        commaExpr
+    PARENTHESES_RIGHT!
+    block;
+
+/* while 语句 <start> */
 
 stmt: 
-    commaExpr ENDLINE -> commaExpr | 
-    condExpr ENDLINE -> condExpr | 
-    // block | 
+    commaExpr ENDLINE -> commaExpr  | 
+    ifExpr ENDLINE -> ifExpr        | 
+    forExpr ENDLINE -> forExpr      | 
+    whileExpr ENDLINE -> whileExpr  | 
     ENDLINE -> ;
 
 block_base: 
@@ -95,7 +113,7 @@ block:
     CURLY_BRACE_LEFT block_base CURLY_BRACE_RIGHT -> ^(TOK_BLOCK block_base);
 
 mainBlock: 
-    KW_MAIN! block;
+    KW_MAIN! PARENTHESES_LEFT! PARENTHESES_RIGHT!  block;
 
 prog: (
     mainBlock {
@@ -108,14 +126,15 @@ prog: (
 
 
 
-
 /* Keywords */
 
-KW_MAIN: 'main';
-KW_IF: 'if';
-KW_ELIF: 'elif';
-KW_ELSE: 'else';
-
+KW_MAIN:    'main';
+KW_IF:      'if';
+KW_ELIF:    'elif';
+KW_ELSE:    'else';
+KW_FOR:     'for';
+KW_WHILE:   'while';
+KW_DO:      'do'; 
 
 /* Operators */
 
@@ -148,6 +167,6 @@ CURLY_BRACE_RIGHT: '}';
 ID: ('a'..'z'|'A'..'Z')+ ;
 INT: '~'? '0'..'9'+ ;
 
-ENDLINE: '\r'? '\n';
+ENDLINE: '\r'? '\n'*;
 
 WS : (' '|'\t')+ {$channel = HIDDEN;};
