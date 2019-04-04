@@ -57,6 +57,7 @@ assignExpr:
     (ID OPR_ASSIGN^)* orExpr;
 
 /* 运算表达式：逗号表达式 */
+
 commaExpr:
     assignExpr (OPR_COMMA^ assignExpr)*;
 
@@ -99,11 +100,22 @@ whileExpr:
 
 /* while 语句 <start> */
 
+/* def 语句 <start> */
+
+defIdExpr: 
+    ID^ (OPR_ASSIGN! atom)?;
+
+defExpr: 
+    KW_DEF^ defIdExpr (OPR_COMMA! defIdExpr)*;
+
+/* def 语句 <end> */
+
 stmt: 
     commaExpr ENDLINE -> commaExpr  | 
     ifExpr ENDLINE -> ifExpr        | 
     forExpr ENDLINE -> forExpr      | 
     whileExpr ENDLINE -> whileExpr  | 
+    defExpr ENDLINE -> defExpr      | 
     ENDLINE -> ;
 
 block_base: 
@@ -135,28 +147,29 @@ KW_ELSE:    'else';
 KW_FOR:     'for';
 KW_WHILE:   'while';
 KW_DO:      'do'; 
+KW_DEF:     'def';
 
 /* Operators */
 
-/*18*/OPR_COMMA: ',';
-/*16*/OPR_ASSIGN: '=';
-/*14*/OPR_OR: '||';
-/*13*/OPR_AND: '&&';
-/*12*/OPR_BIT_OR: '|';
-/*11*/OPR_XOR: '^';
-/*10*/OPR_BIT_AND: '&';
-/* 9*/OPR_EQ: '==';
-/* 9*/OPR_NE: '!=';
-/* 8*/OPR_LT: '<';
-/* 8*/OPR_LE: '<=';
-/* 8*/OPR_GT: '>';
-/* 8*/OPR_GE: '>=';
-/* 6*/OPR_PLUS: '+';
-/* 6*/OPR_MINUS: '-';
-/* 5*/OPR_MULT: '*';
-/* 5*/OPR_DIVISOR: '/';
-/* 5*/OPR_PERCENT: '%';
-/* 3*/OPR_NOT: '!';
+/*18*/ OPR_COMMA: ',';
+/*16*/ OPR_ASSIGN: '=';
+/*14*/ OPR_OR: '||';
+/*13*/ OPR_AND: '&&';
+/*12*/ OPR_BIT_OR: '|';
+/*11*/ OPR_XOR: '^';
+/*10*/ OPR_BIT_AND: '&';
+/* 9*/ OPR_EQ: '==';
+/* 9*/ OPR_NE: '!=';
+/* 8*/ OPR_LT: '<';
+/* 8*/ OPR_LE: '<=';
+/* 8*/ OPR_GT: '>';
+/* 8*/ OPR_GE: '>=';
+/* 6*/ OPR_PLUS: '+';
+/* 6*/ OPR_MINUS: '-';
+/* 5*/ OPR_MULT: '*';
+/* 5*/ OPR_DIVISOR: '/';
+/* 5*/ OPR_PERCENT: '%';
+/* 3*/ OPR_NOT: '!';
 
 PARENTHESES_LEFT: '(';
 PARENTHESES_RIGHT: ')';

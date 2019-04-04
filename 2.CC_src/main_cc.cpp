@@ -1,6 +1,6 @@
 #include "../4.CC_include/ExprTreeEvaluator.h"
 
-using namespace ExprTreeEvaluator_Lib;;
+using namespace KSLib;;
 
 void Analysis_Start(int argc, char **argv) {
     pANTLR3_INPUT_STREAM input;
@@ -28,11 +28,11 @@ void Analysis_Start(int argc, char **argv) {
     tokens->free(tokens);
     lex->free(lex);
     input->close(input);
-
+    
+    return ;
 }
 
 int main (int argc, char* argv[]) {
-    cout << "argc = " << argc << "\n";
     Analysis_Start(argc, argv);
     return 0;
 }

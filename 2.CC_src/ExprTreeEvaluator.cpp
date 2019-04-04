@@ -8,7 +8,7 @@
 
 #include "../4.CC_include/ExprTreeEvaluator.h"
 
-using namespace ExprTreeEvaluator_Lib;
+using namespace KSLib;
 
 
 pANTLR3_BASE_TREE getChild (pANTLR3_BASE_TREE tree, unsigned i) {
@@ -25,14 +25,24 @@ ExprTreeEvaluator::ExprTreeEvaluator (ExprTreeEvaluator *next) {
     this->next = next;
 }
 
-int ExprTreeEvaluator::get_Value (string search_value) {
-    if (this->memory.find(search_value) != this->memory.end()) {
-        return this->memory[search_value];
+bool ExprTreeEvaluator::get_Value (string search_var, int &val) {
+    if (this->memory.find(search_var) != this->memory.end()) {
+        val = this->memory[search_var];
+        return true;
     } else if (this->next != NULL) {
-        return this->next->get_Value(search_value);
+        return this->next->get_Value(search_var, val);
     }
-    std::cerr << "\033[1;31mNo found variable \"" << search_value << "\"\033[0;m\n";
-    exit (-1);
+    return false;
+}
+
+bool KSLib::ExprTreeEvaluator::set_Value (string set_var, int set_val) {
+    if (this->memory.find(set_var) != this->memory.end()) {
+        this->memory[set_var] = set_val;
+        return true;
+    } else if (this->next != NULL) {
+        return this->next->get_Value(set_var, set_val);
+    }
+    return false;
 }
 
 int ExprTreeEvaluator::run (pANTLR3_BASE_TREE tree) {
@@ -60,17 +70,31 @@ int ExprTreeEvaluator::run (pANTLR3_BASE_TREE tree) {
             }
             case ID: {
                 string var(getText(tree));
-                cout << "get memory : " << var << "\n";
-                return get_Value(var);
+                int id_val = 0;
+                if (get_Value(var, id_val)) {
+                    cout << "get memory : " << var << " = " << id_val << "\n";
+                    return id_val;
+                } 
+                std::cerr << "The variable is undefined in this scope" << var << "\n";
+                exit(-1);
             }
             case OPR_COMMA:
                 return run(getChild(tree, 0)), run(getChild(tree, 1));
             case OPR_ASSIGN: {
                 string var(getText(getChild(tree,0)));
-                int val = run(getChild(tree,1));
-                memory[var] = val;
-                cout << "set " << var << " = " << val << "\n";
-                return val;
+                int id_val = 0;
+                if (get_Value(var, id_val)) {
+                    int val = run(getChild(tree,1));
+                    if (!set_Value(var, val)) {
+                        std::cerr << "def : set " << var << " error\n";
+                        exit(-1);
+                    }
+                    // memory[var] = val;
+                    cout << "OPR_ASSIGN : set " << var << " = " << val << "\n";
+                    return val;
+                } 
+                std::cerr << "The variable is undefined in this scope" << var << "\n";
+                exit(-1);
             }
             case KW_IF: {
                 int val = run(getChild(tree, 0));
@@ -112,11 +136,23 @@ int ExprTreeEvaluator::run (pANTLR3_BASE_TREE tree) {
                 return tail_val;
             }
             case KW_WHILE: {
-                int tail_val = 0;
-                while (run(getChild(tree, 0))) {
+                int tail_val = 0, temp_val = 0;
+                while (temp_val = run(getChild(tree, 0))) {
                     tail_val = run(getChild(tree, 1));
+                    cout << "temp_val = " << temp_val << "\n";
                 }
                 return tail_val;
+            }
+            case KW_DEF: {
+                int tree_num = tree->getChildCount(tree);
+                int val = 0;
+                for (int i = 0; i < tree_num; i++) {
+                    string var(getText(getChild(tree,i)));
+                    val = run(getChild(getChild(tree, i), 0));
+                    memory[var] = val;
+                    cout << "def : " << var << " = " << val << "\n";
+                }
+                return val;
             }
             case OPR_OR:{
                 int ret_val = run(getChild(tree, 0)) || run(getChild(tree, 1));
@@ -200,5 +236,6 @@ int ExprTreeEvaluator::run (pANTLR3_BASE_TREE tree) {
         }
         return r;
     }
+    return 0;
 }
 

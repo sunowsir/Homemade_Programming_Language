@@ -20,7 +20,7 @@ using std::string;
 using std::cout;
 
 
-namespace ExprTreeEvaluator_Lib {
+namespace KSLib {
 
     class ExprTreeEvaluator {
     private:
@@ -29,11 +29,11 @@ namespace ExprTreeEvaluator_Lib {
     public:
         ExprTreeEvaluator (ExprTreeEvaluator *next);
         int run(pANTLR3_BASE_TREE);
-        int get_Value(string search_value);
+        bool get_Value(string search_var, int &val);
+        bool set_Value(string set_var, int set_val);
         friend pANTLR3_BASE_TREE getChild(pANTLR3_BASE_TREE, unsigned);
         friend const char* getText(pANTLR3_BASE_TREE tree);
     };
-
 
 }
 
