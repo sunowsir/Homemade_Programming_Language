@@ -20,6 +20,9 @@
 ## Generation interpreter
 
 ``` bash
+# Go to the 'build' directory
+cd build
+
 # Run 'antlr' to generate the syntax tree code via the grammar file ('ExprCppTree.g')
 make genTree
 
