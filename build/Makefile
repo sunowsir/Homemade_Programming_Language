@@ -1,6 +1,6 @@
 CC 		= g++
 CFLAGS 	= -g -I include 
-VPATH 	= ../:../src/:../include/:../lib/:../lib/1.Need_file/1.Antlr_3.4/
+VPATH 	= ../:../src/:../include/:../lib/
 
 RELY = \
 	main.o \
@@ -13,7 +13,7 @@ RELY = \
 	$(shell ls ../lib/1.Need_file/*.o 2> /dev/null | tr -s '\n' ' ') 
 
 kscc : ${RELY}
-	@echo "\n[\033[1;32mLINK\033[0m] cc -g -I include -Wall *.o"
+	@echo "[\033[1;32mLINK\033[0m] cc -g -I include -Wall *.o"
 	@${CC} ${CFLAGS} -Wall ${RELY} -o kscc
 
 main.o : main.cpp
