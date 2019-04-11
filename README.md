@@ -23,14 +23,21 @@
 # Go to the 'build' directory
 cd build
 
+# Empty the old compilation file
+make clean
+
 # Run 'antlr' to generate the syntax tree code via the grammar file ('ExprCppTree.g')
 make genTree
 
 # Generate an interpreter by compiling
 make 
 
-# install program to system '/usr/bin/'
+# Install program to system '/usr/bin/'
 make install 
+
+# Uninstall program from system '/usr/bin'
+make remove
+
 ```
 
 
