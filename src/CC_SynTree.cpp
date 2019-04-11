@@ -5,26 +5,26 @@
 	> GitHub:       github.com/sunowsir
 	> Created Time: 2019年04月05日 星期五 17时04分04秒
  ************************************************************************/
-#include "../4.CC_include/CC_SynTree.h"
+#include "../include/CC_SynTree.h"
 
 SKL::SynTree SKL::SynTree::getChild (unsigned childNum) {
-    assert(childNum < this->getChildNum());
-    SynTree _tempST(this->tree->getChild(this->tree, childNum));
+    assert(childNum < this->tree->getChildCount(this->tree));
+    SynTree _tempST((pANTLR3_BASE_TREE)this->tree->getChild(this->tree, childNum));
     return _tempST;
 }
 
 const char* SKL::SynTree::getText () {
-    return this->tree->getText(this->tree)->chars;
+    return ((const char*)this->tree->getText(this->tree)->chars);
 }
 
 int SKL::SynTree::getChildNum () {
     return this->tree->getChildCount(this->tree);
 }
 
-int SKL::getTokType () {
+int SKL::SynTree::getTokType () {
     return this->tok->type;
 }
 
-bool SKL::tokEmpty() {
+bool SKL::SynTree::tokEmpty() {
     return (this->tok ? false : true);
 }

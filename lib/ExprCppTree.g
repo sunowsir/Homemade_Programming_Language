@@ -1,4 +1,4 @@
-grammar hl;
+grammar ExprCppTree;
 
 options {
     language = C;

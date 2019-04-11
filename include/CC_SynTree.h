@@ -8,8 +8,8 @@
 #ifndef _CC_SYNTREE_H
 #define _CC_SYNTREE_H
 
-#include "../5.CC_lib/ExprCppTreeLexer.h"
-#include "../5.CC_lib/ExprCppTreeParser.h"
+#include "../lib/ExprCppTreeLexer.h"
+#include "../lib/ExprCppTreeParser.h"
 
 namespace SKL {
     class SynTree {
@@ -17,8 +17,9 @@ namespace SKL {
         pANTLR3_BASE_TREE tree;
         pANTLR3_COMMON_TOKEN tok;
     public : 
-        SynTree (pANTLR3_BASE_TREE new_tree) 
-        tree (new_tree) {
+        SynTree (pANTLR3_BASE_TREE new_tree) :  
+            tree (new_tree) 
+        {
             tok = this->tree->getToken(this->tree);
         }
         

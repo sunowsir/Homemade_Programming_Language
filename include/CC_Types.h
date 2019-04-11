@@ -9,7 +9,8 @@
 #define _CC_TYPES_H
 
 namespace SKL {
-    class Types {};
+    class Types {
+    };
 }
 
 #endif
